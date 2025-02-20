@@ -1,6 +1,7 @@
 package phoug.store.model;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder

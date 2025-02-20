@@ -1,12 +1,11 @@
 package phoug.store.dao.impl;
 
-import org.springframework.stereotype.Repository;
-import phoug.store.dao.ProductDao;
-import phoug.store.model.Product;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Repository;
+import phoug.store.dao.ProductDao;
+import phoug.store.model.Product;
 
 @Repository
 public class ProductDaoImpl implements ProductDao {
