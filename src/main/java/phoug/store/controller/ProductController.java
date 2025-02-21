@@ -28,6 +28,7 @@ public class ProductController {
         return service.findProductByPriceRange(lower, upper);
     }
 
+
     @GetMapping("/search")
     public Product findProductByName(@RequestParam String name) {
         return service.findProductByName(name);
