@@ -2,7 +2,6 @@ package phoug.store.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 import phoug.store.dao.ProductDao;
 import phoug.store.model.Product;
@@ -44,7 +43,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> findProductsByPriceRange(double lower, double upper) {
         return productArrayList.stream()
                 .filter(product -> product.getPrice() >= lower && product.getPrice() <= upper)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
