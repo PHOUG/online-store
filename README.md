@@ -20,7 +20,6 @@
 2. Корзина товаров пользователя
 3. Отзывы и описание товаров
 4. Фильтр товаров по заданным параметрам
-
 ---
 
 
@@ -46,8 +45,33 @@
 ```bash
 git clone https://github.com/PHOUG/online-store.git
 cd online-store
-```
-```
 mvn clean install
 mvn spring-boot:run
 ```
+---
+## 📝 Postman тесты:
+1. **Вывод всего списка**:
+
+```localhost:8080/products```
+
+2. **Поиск товара по названию**:
+
+```localhost:8080/products/search?name=Футболка Hugo```
+
+```localhost:8080/products/search?name=Очки Palaroid```
+
+```localhost:8080/products/search?name=Кроссовки Adidas```
+
+3. **Поиск товара по артиклю**:
+
+```localhost:8080/products/RTLADQ051101```
+
+```localhost:8080/products/RTLADV969101```
+
+```localhost:8080/products/RTLADO561701```
+
+
+4. **Поиск товарОВ по диапазону цены**:
+
+```localhost:8080/products/price-range/100-200```
+
