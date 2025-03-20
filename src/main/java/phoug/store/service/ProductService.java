@@ -20,8 +20,8 @@ public interface ProductService {
     // Read-GET для поиска товара по артикулу
     Product findProductByArticle(String article);
 
-    // Update-PUT обновление названия товара
-    Product updateProductName(Product product);
+    // Update-PUT обновление товара
+    Product updateProduct(String article, Product updatedProduct);
 
     // DELETE удаление продукта по артикулу
     void deleteProductByArticle(String article);

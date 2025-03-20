@@ -52,8 +52,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProductName(Product product) {
-        return productRepository.save(product);
+    public Product updateProduct(String article, Product updatedProduct) {
+        Product existingProduct = productRepository.findProductByArticle(article)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product with article " + article + " not found"));
+
+        // Обновляем все поля
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setArticle(updatedProduct.getArticle());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setImage(updatedProduct.getImage());
+        existingProduct.setBrand(updatedProduct.getBrand());
+        existingProduct.setSize(updatedProduct.getSize());
+        existingProduct.setColor(updatedProduct.getColor());
+
+        return productRepository.save(existingProduct);
     }
 
     @Override

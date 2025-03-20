@@ -56,10 +56,12 @@ public class ProductController {
         return productService.findProductByArticle(article);
     }
 
-    // Update-PUT обновление названия товара
-    @PutMapping("update")
-    public Product updateProductName(@RequestBody Product product) {
-        return productService.updateProductName(product);
+    @PutMapping("update/{article}")
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable String article,
+            @RequestBody Product updatedProduct) {
+        Product updated = productService.updateProduct(article, updatedProduct);
+        return ResponseEntity.ok(updated);
     }
 
     // DELETE удаление продукта по названию
