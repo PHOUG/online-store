@@ -88,7 +88,7 @@ mvn spring-boot:run
 
 4. **Поиск товарОВ по диапазону цены**:
 
-```localhost:8080/products/price-range/100-200```
+```localhost:8080/products/price_range/100-200```
 
 ---
 

@@ -2,8 +2,14 @@ package phoug.store.controller;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,27 +21,56 @@ import phoug.store.service.ProductService;
 @RequestMapping("/products")
 @AllArgsConstructor
 public class ProductController {
-    private final ProductService service;
+    private final ProductService productService;
 
-    @GetMapping()
-    public List<Product> findAllProducts() {
-        return service.findAllProducts();
+    // Create-POST создать новую карточку товара
+    @PostMapping("create")
+    public ResponseEntity<String> createProduct(@RequestBody Product product) {
+        // Сохраняем товар в репозитории
+        productService.saveProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Product has been created!");
     }
 
-    @GetMapping("/price-range/{lower}-{upper}")
+    // Read-GET вывод всех товаров
+    @GetMapping("search/all")
+    public List<Product> findAllProducts() {
+        return productService.findAllProducts();
+    }
+
+    // Read-GET вывод товаров в диапазоне цен
+    @GetMapping("search/price_range/{lower}-{upper}")
     public List<Product> findProductsByPriceRange(@PathVariable double lower,
                                                   @PathVariable double upper) {
-        return service.findProductByPriceRange(lower, upper);
+        return productService.findProductsByPriceRange(lower, upper);
     }
 
-
-    @GetMapping("/search")
+    // Read-GET вывод товаров по имени
+    @GetMapping("search/name")
     public Product findProductByName(@RequestParam String name) {
-        return service.findProductByName(name);
+        return productService.findProductByName(name);
     }
 
-    @GetMapping("/{article}")
+    // Read-GET вывод товара по артиклю
+    @GetMapping("search/{article}")
     public Product findProductByArticle(@PathVariable String article) {
-        return service.findProductByArticle(article);
+        return productService.findProductByArticle(article);
+    }
+
+    // Update-PUT обновление названия товара
+    @PutMapping("update")
+    public Product updateProductName(@RequestBody Product product) {
+        return productService.updateProductName(product);
+    }
+
+    // DELETE удаление продукта по названию
+    @DeleteMapping("delete/{article}")
+    public ResponseEntity<String> deleteProductByArticle(@PathVariable String article) {
+        productService.deleteProductByArticle(article);
+        return ResponseEntity.status(HttpStatus.OK).body("Product has been deleted!");
+    }
+
+    @DeleteMapping("delete/all")
+    public void deleteAllProducts() {
+        productService.deleteAllProducts();
     }
 }
