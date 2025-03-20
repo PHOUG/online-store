@@ -26,7 +26,7 @@ public class ReviewController {
     private final ProductService productService;
 
     // Создание отзыва для товара по артикулу
-    @PostMapping("/create/{productArticle}")
+    @PostMapping("create/{productArticle}")
     public ResponseEntity<String> createReview(@PathVariable String productArticle,
                                                @RequestBody Review review) {
         Product product = productService.findProductByArticle(productArticle);
@@ -41,7 +41,7 @@ public class ReviewController {
     }
 
     // Получение всех отзывов для товара по артикулу
-    @GetMapping("/search/{productArticle}")
+    @GetMapping("search/{productArticle}")
     public ResponseEntity<List<Review>> findReviews(@PathVariable String productArticle) {
         Optional<Product> productOpt = Optional.ofNullable(
                 productService.findProductByArticle(productArticle));
@@ -55,7 +55,7 @@ public class ReviewController {
     }
 
     // Получение конкретного отзыва по его ID
-    @GetMapping("/{id}")
+    @GetMapping("search/{id}")
     public ResponseEntity<Review> findReview(@PathVariable Long id) {
         Optional<Review> reviewOpt = reviewService.findReviewById(id);
 
@@ -64,7 +64,7 @@ public class ReviewController {
     }
 
     // Обновление отзыва по ID
-    @PutMapping("/update/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<String> updateReview(@PathVariable Long id,
                                                @RequestBody Review updatedReview) {
         Optional<Review> existingReviewOpt = reviewService.findReviewById(id);
@@ -83,7 +83,7 @@ public class ReviewController {
     }
 
     // ✅ Удаление отзыва по ID
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<String> deleteReview(@PathVariable Long id) {
         if (!reviewService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Review not found!");
