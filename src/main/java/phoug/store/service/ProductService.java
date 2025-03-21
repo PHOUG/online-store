@@ -27,4 +27,6 @@ public interface ProductService {
     void deleteProductByArticle(String article);
 
     void deleteAllProducts();
+
+    Product findProductById(Long id);
 }

@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface CategoryService {
 
-    void addProductToCategory(Long categoryId, Long productId);
+    boolean addProductToCategory(Long categoryId, Long productId);
 
-    void removeProductFromCategory(Long categoryId, Long productId);
+    boolean removeProductFromCategory(Long categoryId, Long productId);
 
     void saveCategory(Category category);
 

@@ -1,6 +1,7 @@
 package phoug.store.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,29 +17,36 @@ import java.util.Optional;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    // Добавить товар в категорию
     @PostMapping("/{categoryId}/add/{productId}")
-    public ResponseEntity<String> addProductToCategory(@PathVariable Long categoryId, @PathVariable Long productId) {
-        categoryService.addProductToCategory(categoryId, productId);
-        return ResponseEntity.status(HttpStatus.OK).body("Product added to category!");
+    public ResponseEntity<String> addProductToCategory(@PathVariable Long categoryId,
+                                                       @PathVariable Long productId) {
+        boolean success = categoryService.addProductToCategory(categoryId, productId);
+        if (success) {
+            return ResponseEntity.status(HttpStatus.OK).body("Product added to category!");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    "Error: product or category not found, or product already added.");
+        }
     }
 
-    // Удалить товар из категории
     @DeleteMapping("/{categoryId}/remove/{productId}")
-    public ResponseEntity<String> removeProductFromCategory(@PathVariable Long categoryId, @PathVariable Long productId) {
-        categoryService.removeProductFromCategory(categoryId, productId);
-        return ResponseEntity.status(HttpStatus.OK).body("Product removed from category!");
+    public ResponseEntity<String> removeProductFromCategory(@PathVariable Long categoryId,
+                                                            @PathVariable Long productId) {
+        boolean success = categoryService.removeProductFromCategory(categoryId, productId);
+        if (success) {
+            return ResponseEntity.status(HttpStatus.OK).body("Product removed from category!");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    "Error: Product or category not found.");
+        }
     }
 
-    // Create-POST создать новую карточку товара
-    @PostMapping("create")
+    @PostMapping("/create")
     public ResponseEntity<String> createCategory(@RequestBody Category category) {
-        // Сохраняем товар в репозитории
         categoryService.saveCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body("Category has been created!");
     }
 
-    // Read-GET вывод всех товаров
     @GetMapping("search/all")
     public List<Category> findAllCategory() {
         return categoryService.findAllCategory();

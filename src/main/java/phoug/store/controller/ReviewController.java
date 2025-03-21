@@ -40,6 +40,18 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Review has been created!");
     }
 
+    @PostMapping("create/id/{id}")
+    public ResponseEntity<String> createReviewById(@PathVariable Long id,
+                                                   @RequestBody Review review) {
+        Product product = productService.findProductById(id);
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found!");
+        }
+        review.setProduct(product); // Связываем отзыв с товаром
+        reviewService.saveReview(review);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Review has been created!");
+    }
+
     // Получение всех отзывов для товара по артикулу
     @GetMapping("search/{productArticle}")
     public ResponseEntity<List<Review>> findReviews(@PathVariable String productArticle) {

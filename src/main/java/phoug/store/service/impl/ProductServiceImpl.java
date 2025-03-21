@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import phoug.store.exception.ResourceNotFoundException;
+import phoug.store.model.Category;
 import phoug.store.model.Product;
 import phoug.store.repository.ProductRepository;
 import phoug.store.service.ProductService;
@@ -23,6 +24,17 @@ public class ProductServiceImpl implements ProductService {
     public void saveProduct(Product product) {
         productRepository.save(product);
     }
+
+    @Override
+    public Product findProductById(Long id) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent()) {
+            return productOpt.get();
+        } else {
+            throw new RuntimeException("Product not found with id: " + id);
+        }
+    }
+
 
     @Override
     public List<Product> findAllProducts() {
@@ -72,9 +84,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProductByArticle(String article) {
-        Optional<Product> product = productRepository.findProductByArticle(article);
-        if (product.isPresent()) {
-            productRepository.delete(product.get());
+        Optional<Product> productOpt = productRepository.findProductByArticle(article);
+        if (productOpt.isPresent()) {
+            Product product = productOpt.get();
+
+            // Убираем товар из всех категорий (удаляем связь)
+            for (Category category : product.getCategories()) {
+                category.getProducts().remove(product);
+            }
+
+            productRepository.delete(product);
         }
     }
 

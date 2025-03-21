@@ -1,6 +1,8 @@
 package phoug.store.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import phoug.store.model.Category;
@@ -8,7 +10,6 @@ import phoug.store.model.Product;
 import phoug.store.repository.CategoryRepository;
 import phoug.store.repository.ProductRepository;
 import phoug.store.service.CategoryService;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -20,25 +21,60 @@ public class CategoryServiceImpl implements CategoryService {
     private final ProductRepository productRepository;
 
     // Добавить товар в категорию
-    public void addProductToCategory(Long categoryId, Long productId) {
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        Optional<Product> product = productRepository.findById(productId);
+    @Transactional
+    public boolean addProductToCategory(Long categoryId, Long productId) {
+        Optional<Category> categoryOpt = categoryRepository.findById(categoryId);
+        Optional<Product> productOpt = productRepository.findById(productId);
 
-        if (category.isPresent() && product.isPresent()) {
-            category.get().getProducts().add(product.get());
-            categoryRepository.save(category.get()); // Сохраняем обновленную категорию
+        if (categoryOpt.isEmpty()) {
+            return false;
         }
+
+        if (productOpt.isEmpty()) {
+            return false;
+        }
+
+        Category category = categoryOpt.get();
+        Product product = productOpt.get();
+
+        if (category.getProducts().contains(product)) {
+            return false;
+        }
+
+        category.getProducts().add(product);
+        product.getCategories().add(category);
+
+        categoryRepository.save(category);
+        productRepository.save(product);
+
+        return true;
     }
 
     // Удалить товар из категории
-    public void removeProductFromCategory(Long categoryId, Long productId) {
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        Optional<Product> product = productRepository.findById(productId);
+    @Transactional
+    public boolean removeProductFromCategory(Long categoryId, Long productId) {
+        Optional<Category> categoryOpt = categoryRepository.findById(categoryId);
+        Optional<Product> productOpt = productRepository.findById(productId);
 
-        if (category.isPresent() && product.isPresent()) {
-            category.get().getProducts().remove(product.get());
-            categoryRepository.save(category.get()); // Сохраняем обновленную категорию
+        if (categoryOpt.isEmpty()) {
+            return false;
         }
+
+        if (productOpt.isEmpty()) {
+            return false;
+        }
+
+        Category category = categoryOpt.get();
+        Product product = productOpt.get();
+
+        if (!category.getProducts().contains(product)) {
+            return false;
+        }
+
+        category.getProducts().remove(product);
+        categoryRepository.save(category);
+
+        return true;
     }
 
     @Override
