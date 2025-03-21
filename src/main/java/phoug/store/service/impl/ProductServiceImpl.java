@@ -17,7 +17,7 @@ import phoug.store.service.ProductService;
 @AllArgsConstructor
 @Primary
 public class ProductServiceImpl implements ProductService {
-    private static final String notFound = " not found";
+    private static final String NOTFOUND = " not found";
     private final ProductRepository productRepository;
     private final JdbcTemplate jdbcTemplate;
 
@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
     public Product findProductByName(String name) {
         return productRepository.findProductByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Product with name " + name + notFound));
+                        "Product with name " + name + NOTFOUND));
     }
 
     @Override
@@ -61,14 +61,14 @@ public class ProductServiceImpl implements ProductService {
         // Если продукт не найден, выбрасываем исключение
         return productRepository.findProductByArticle(article)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Product with article " + article + notFound));
+                        "Product with article " + article + NOTFOUND));
     }
 
     @Override
     public Product updateProduct(String article, Product updatedProduct) {
         Product existingProduct = productRepository.findProductByArticle(article)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Product with article " + article + notFound));
+                        "Product with article " + article + NOTFOUND));
 
         // Обновляем все поля
         existingProduct.setName(updatedProduct.getName());

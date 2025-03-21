@@ -2,11 +2,8 @@ package phoug.store.service;
 
 import java.util.List;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 import phoug.store.model.Product;
 import phoug.store.model.Review;
-import phoug.store.repository.ReviewRepository;
 
 public interface ReviewService {
     // Сохранение отзыва

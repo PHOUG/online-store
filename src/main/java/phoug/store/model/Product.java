@@ -3,9 +3,7 @@ package phoug.store.model;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.Data;
 
 @Data
@@ -38,8 +36,7 @@ public class Product {
             fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Category> categories = new ArrayList<>();
 
-    // Конструктор по умолчанию
-    public Product() {}
-
-    // Может быть понадобиться конструктор с параметрами
+    public Product() {
+        // Конструктор по умолчанию
+    }
 }
