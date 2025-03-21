@@ -17,6 +17,7 @@ import phoug.store.service.ProductService;
 @AllArgsConstructor
 @Primary
 public class ProductServiceImpl implements ProductService {
+    private static final String notFound = " not found";
     private final ProductRepository productRepository;
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
         if (productOpt.isPresent()) {
             return productOpt.get();
         } else {
-            throw new RuntimeException("Product not found with id: " + id);
+            throw new ResourceNotFoundException("Product not found with id: " + id);
         }
     }
 
@@ -52,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
     public Product findProductByName(String name) {
         return productRepository.findProductByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Product with name " + name + " not found"));
+                        "Product with name " + name + notFound));
     }
 
     @Override
@@ -60,14 +61,14 @@ public class ProductServiceImpl implements ProductService {
         // Если продукт не найден, выбрасываем исключение
         return productRepository.findProductByArticle(article)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Product with article " + article + " not found"));
+                        "Product with article " + article + notFound));
     }
 
     @Override
     public Product updateProduct(String article, Product updatedProduct) {
         Product existingProduct = productRepository.findProductByArticle(article)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Product with article " + article + " not found"));
+                        "Product with article " + article + notFound));
 
         // Обновляем все поля
         existingProduct.setName(updatedProduct.getName());

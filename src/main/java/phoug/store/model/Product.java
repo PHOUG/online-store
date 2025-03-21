@@ -41,17 +41,5 @@ public class Product {
     // Конструктор по умолчанию
     public Product() {}
 
-    // Конструктор с параметрами
-    public Product(String name, String article, double price,
-                   String description, String image, String brand,
-                   String size, String color) {
-        this.name = name;
-        this.article = article;
-        this.price = price;
-        this.description = description;
-        this.image = image;
-        this.brand = brand;
-        this.size = size;
-        this.color = color;
-    }
+    // Может быть понадобиться конструктор с параметрами
 }
