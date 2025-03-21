@@ -1,8 +1,9 @@
 package phoug.store.service.impl;
 
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import phoug.store.model.Category;
@@ -10,8 +11,6 @@ import phoug.store.model.Product;
 import phoug.store.repository.CategoryRepository;
 import phoug.store.repository.ProductRepository;
 import phoug.store.service.CategoryService;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

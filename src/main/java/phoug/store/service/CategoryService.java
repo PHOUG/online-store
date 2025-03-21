@@ -1,9 +1,8 @@
 package phoug.store.service;
 
-import phoug.store.model.Category;
-
 import java.util.List;
 import java.util.Optional;
+import phoug.store.model.Category;
 
 public interface CategoryService {
 

@@ -2,7 +2,6 @@ package phoug.store.model;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
