@@ -1,6 +1,8 @@
 package phoug.store.controller;
 
 import java.util.List;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,5 +86,15 @@ public class ProductController {
     @DeleteMapping("delete/all")
     public void deleteAllProducts() {
         productService.deleteAllProducts();
+    }
+
+    // Эндпоинт для получения всех товаров из кэша
+    @GetMapping("/cached")
+    public ResponseEntity<List<Product>> getCachedProducts() {
+        List<Product> cachedProducts = productService.getCachedProducts();
+        if (cachedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(cachedProducts);
     }
 }

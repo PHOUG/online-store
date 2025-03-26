@@ -1,6 +1,8 @@
 package phoug.store.service;
 
 import java.util.List;
+import java.util.Map;
+
 import phoug.store.model.Product;
 
 public interface ProductService {
@@ -30,4 +32,7 @@ public interface ProductService {
     Product findProductById(Long id);
 
     List<Product> findProductsByCategories(List<String> categories);
+
+    // Метод для получения всех значений из кэша
+    List<Product> getCachedProducts();
 }
