@@ -28,4 +28,6 @@ public interface ProductService {
     void deleteAllProducts();
 
     Product findProductById(Long id);
+
+    List<Product> findProductsByCategories(List<String> categories);
 }

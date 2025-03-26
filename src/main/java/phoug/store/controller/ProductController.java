@@ -56,6 +56,16 @@ public class ProductController {
         return productService.findProductByArticle(article);
     }
 
+    @GetMapping("search/categories")
+    public ResponseEntity<List<Product>> findProductsByCategories(
+            @RequestParam(name = "category") List<String> categories) {
+        List<Product> products = productService.findProductsByCategories(categories);
+        if (products.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(products);
+        }
+        return ResponseEntity.ok(products);
+    }
+
     @PutMapping("update/{article}")
     public ResponseEntity<Product> updateProduct(
             @PathVariable String article,
