@@ -26,7 +26,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     IN :categories 
     GROUP BY p.id 
     HAVING COUNT(DISTINCT c.id) = :size
-        """)
+            """)
     List<Product> findProductsByAllCategories(
             @Param("categories") List<String> categories, @Param("size") long size);
 }

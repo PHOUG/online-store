@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
 
         // Перебираем найденные продукты и сохраняем их в кэш по их id
         for (Product product : products) {
-            Product cachedProduct = productCache.get(product.getId());  // Проверяем, есть ли уже в кэше
+            Product cachedProduct = productCache.get(product.getId());
             if (cachedProduct == null) {
                 productCache.put(product.getId(), product);  // Если нет, добавляем в кэш
                 logger.info("Cache put for product with id: {}", product.getId());
