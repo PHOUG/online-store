@@ -25,6 +25,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final InMemoryCache<Long, Product> productCache;
     private final JdbcTemplate jdbcTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(InMemoryCache.class);
 
     @Override
     public void saveProduct(Product product) {
@@ -68,9 +69,6 @@ public class ProductServiceImpl implements ProductService {
         return products;
     }
 
-
-    private static final Logger logger = LoggerFactory.getLogger(InMemoryCache.class);
-
     @Override
     public Product findProductByArticle(String article) {
         Optional<Product> productOpt = productRepository.findProductByArticle(article);
@@ -83,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
             productCache.put(product.getId(), product);
             return product;
         } else {
-            throw new ResourceNotFoundException("Product with article " + article + " not found");
+            throw new ResourceNotFoundException("Product with article " + article + NOTFOUND);
         }
     }
 

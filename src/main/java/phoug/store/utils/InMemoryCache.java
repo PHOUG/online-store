@@ -116,12 +116,6 @@ public class InMemoryCache<K, V> {
         return cache.values().stream()
                 .filter(entry -> !entry.isExpired())
                 .map(CacheEntry::getValue)
-                .collect(Collectors.toList());
-    }
-
-    public Map<K, V> getAllEntries() {
-        return cache.entrySet().stream()
-                .filter(entry -> !entry.getValue().isExpired())
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getValue()));
+                .toList();
     }
 }

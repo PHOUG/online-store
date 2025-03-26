@@ -1,7 +1,6 @@
 package phoug.store.service;
 
 import java.util.List;
-import java.util.Map;
 import phoug.store.model.Product;
 
 public interface ProductService {
