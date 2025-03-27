@@ -48,8 +48,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> findAllProducts() {
-        return productRepository.findAll();
+        // Получаем все товары из кэша
+        List<Product> cachedProducts = new ArrayList<>(productCache.getAllValues());
+        logger.info("Loaded {} products from cache", cachedProducts.size());
+
+        // Получаем из БД только те товары, которых нет в кэше
+        List<Product> dbProducts = productRepository.findAll().stream()
+                .filter(product -> productCache.get(product.getId()) == null)
+                .toList();
+
+        logger.info("Loaded {} products from database", dbProducts.size());
+
+        // Объединяем данные из кэша и БД
+        cachedProducts.addAll(dbProducts);
+        return cachedProducts;
     }
+
+
 
     @Override
     public List<Product> findProductsByPriceRange(double lower, double upper) {
