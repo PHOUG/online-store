@@ -1,6 +1,7 @@
 package phoug.store.service.impl;
 
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,21 +53,38 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> findProductsByPriceRange(double lower, double upper) {
-        // Ищем все товары в заданном ценовом диапазоне из базы данных
-        List<Product> products = productRepository.findProductsByPriceBetween(lower, upper)
+        // Ищем товары в кэше
+        List<Product> cachedProducts = productCache.getAllValues().stream()
+                .filter(product -> product.getPrice() >= lower && product.getPrice() <= upper)
+                .toList();
+
+        logger.info("Cache contains {} products in price range: {} - {}",
+                cachedProducts.size(), lower, upper);
+
+        // Ищем товары в БД, которые еще не находятся в кэше
+        List<Product> dbProducts = productRepository.findProductsByPriceBetween(lower, upper)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Products in this price range not found"));
 
-        // Перебираем найденные продукты и сохраняем их в кэш по их id
-        for (Product product : products) {
-            Product cachedProduct = productCache.get(product.getId());
-            if (cachedProduct == null) {
-                productCache.put(product.getId(), product);  // Если нет, добавляем в кэш
-                logger.info("Cache put for product with id: {}", product.getId());
-            }
+        // Фильтруем только новые товары, которых нет в кэше
+        List<Product> newProducts = dbProducts.stream()
+                .filter(product -> productCache.get(product.getId()) == null)
+                .toList();
+
+        // Добавляем в кэш новые товары
+        for (Product product : newProducts) {
+            productCache.put(product.getId(), product);
         }
 
-        return products;
+        if (!newProducts.isEmpty()) {
+            logger.info("Products moved to cache in price range: {} - {}", lower, upper);
+        }
+
+        // Возвращаем объединенный список (из кэша + новые из БД)
+        List<Product> result = new ArrayList<>(cachedProducts);
+        result.addAll(newProducts);
+
+        return result;
     }
 
     @Override
