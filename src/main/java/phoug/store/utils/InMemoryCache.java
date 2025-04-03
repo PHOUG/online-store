@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,6 +35,7 @@ public class InMemoryCache<K, V> {
     private final int maxSize;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
+    @Autowired
     public InMemoryCache() {
         this(300_000, 100); // 10 минут, максимум 25 элементов
     }

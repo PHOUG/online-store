@@ -1,4 +1,4 @@
-package com.myfinance.financetracker.aspect;
+package phoug.store.aspect;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
