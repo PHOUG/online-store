@@ -7,8 +7,9 @@ import phoug.store.utils.InMemoryCache;
 
 @Configuration
 public class InMemoryCacheConfiguration {
+
     @Bean
     public InMemoryCache<Long, Product> productCache() {
-        return new InMemoryCache<>();
+        return new InMemoryCache<>(300_000, 100);
     }
 }

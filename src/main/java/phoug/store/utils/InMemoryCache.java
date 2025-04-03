@@ -35,7 +35,7 @@ public class InMemoryCache<K, V> {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     public InMemoryCache() {
-        this(600_000, 25); // 10 минут, максимум 25 элементов
+        this(300_000, 100); // 10 минут, максимум 25 элементов
     }
 
     public InMemoryCache(long ttlMillis, int maxSize) {
