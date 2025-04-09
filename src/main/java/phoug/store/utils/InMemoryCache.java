@@ -37,7 +37,7 @@ public class InMemoryCache<K, V> {
 
     @Autowired
     public InMemoryCache() {
-        this(300_000, 100); // 10 минут, максимум 25 элементов
+        this(300_000, 100); // 5 минут, максимум 100 элементов
     }
 
     public InMemoryCache(long ttlMillis, int maxSize) {

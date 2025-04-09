@@ -1,5 +1,6 @@
 package phoug.store.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class ProductController {
 
     // Create-POST создать новую карточку товара
     @PostMapping("create")
-    public ResponseEntity<String> createProduct(@RequestBody Product product) {
+    public ResponseEntity<String> createProduct(@Valid @RequestBody Product product) {
         // Сохраняем товар в репозитории
         productService.saveProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body("Product has been created!");
@@ -69,7 +70,7 @@ public class ProductController {
     @PutMapping("update/{article}")
     public ResponseEntity<Product> updateProduct(
             @PathVariable String article,
-            @RequestBody Product updatedProduct) {
+            @Valid @RequestBody Product updatedProduct) {
         Product updated = productService.updateProduct(article, updatedProduct);
         return ResponseEntity.ok(updated);
     }

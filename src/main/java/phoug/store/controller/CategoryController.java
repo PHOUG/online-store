@@ -1,5 +1,6 @@
 package phoug.store.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -41,7 +42,7 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createCategory(@RequestBody Category category) {
+    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
         categoryService.saveCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body("Category has been created!");
     }
@@ -58,7 +59,7 @@ public class CategoryController {
 
     @PutMapping("update/{id}")
     public ResponseEntity<String> updateCategory(@PathVariable Long id,
-                                                 @RequestBody Category updatedCategory) {
+                                                 @Valid @RequestBody Category updatedCategory) {
         Optional<Category> existingCategory = categoryService.findCategoryById(id);
         if (existingCategory.isPresent()) {
             Category category = existingCategory.get();
@@ -82,5 +83,4 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category not found!");
         }
     }
-
 }

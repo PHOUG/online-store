@@ -2,6 +2,7 @@ package phoug.store.model;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
@@ -16,6 +17,8 @@ public class Category {
     private Long id;
 
     @Column(unique = true, nullable = false)
+    @NotEmpty(message = "Category name is required.")
+    @Size(min = 3, message = "Category name must be more than three (3) characters long.")
     private String categoryName;
 
     @JsonIgnoreProperties({"categories"})

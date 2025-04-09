@@ -2,6 +2,7 @@ package phoug.store.model;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
@@ -16,10 +17,17 @@ public class Product {
     private long id;
 
     @Column(unique = true, nullable = false)
+    @NotEmpty(message = "Article is required.")
+    @Size(min = 2, message = "Category name must be more than two (2) characters long.")
     private String article;     // Артикул для быстрого поиска
 
+    @NotEmpty(message = "Product name is required.")
     private String name;        // Название товара
+
+    @NotNull(message = "Product price is required.")
+    @DecimalMin(value = "0.01", message = "The minimum price of the product is 0.01.")
     private double price;       // Цена за штуку
+
     private String description;
     private String image;
     private String brand;

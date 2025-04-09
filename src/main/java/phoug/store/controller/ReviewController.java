@@ -1,18 +1,12 @@
 package phoug.store.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import phoug.store.model.Product;
 import phoug.store.model.Review;
 import phoug.store.service.ProductService;
@@ -27,8 +21,8 @@ public class ReviewController {
 
     // Создание отзыва для товара по артикулу
     @PostMapping("create/{productArticle}")
-    public ResponseEntity<String> createReview(@PathVariable String productArticle,
-                                               @RequestBody Review review) {
+    public ResponseEntity<String> createReview(@Valid @PathVariable String productArticle,
+                                               @Valid @RequestBody Review review) {
         Product product = productService.findProductByArticle(productArticle);
 
         if (product == null) {
@@ -40,9 +34,9 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Review has been created!");
     }
 
-    @PostMapping("create/id/{id}")
+    @PostMapping("create/by-id/{id}")
     public ResponseEntity<String> createReviewById(@PathVariable Long id,
-                                                   @RequestBody Review review) {
+                                                   @Valid @RequestBody Review review) {
         Product product = productService.findProductById(id);
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found!");
@@ -67,7 +61,7 @@ public class ReviewController {
     }
 
     // Получение конкретного отзыва по его ID
-    @GetMapping("search/{id}")
+    @GetMapping("search/by-id/{id}")
     public ResponseEntity<Review> findReview(@PathVariable Long id) {
         Optional<Review> reviewOpt = reviewService.findReviewById(id);
 
@@ -78,7 +72,7 @@ public class ReviewController {
     // Обновление отзыва по ID
     @PutMapping("update/{id}")
     public ResponseEntity<String> updateReview(@PathVariable Long id,
-                                               @RequestBody Review updatedReview) {
+                                               @Valid @RequestBody Review updatedReview) {
         Optional<Review> existingReviewOpt = reviewService.findReviewById(id);
 
         if (existingReviewOpt.isEmpty()) {
@@ -94,7 +88,7 @@ public class ReviewController {
         return ResponseEntity.ok("Review has been updated!");
     }
 
-    // ✅ Удаление отзыва по ID
+    // Удаление отзыва по ID
     @DeleteMapping("delete/{id}")
     public ResponseEntity<String> deleteReview(@PathVariable Long id) {
         if (!reviewService.existsById(id)) {
