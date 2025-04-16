@@ -6,11 +6,12 @@ import jakarta.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
 @Table(name = "categories")
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@ToString(exclude = "products")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

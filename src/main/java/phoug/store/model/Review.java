@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
 @Table(name = "reviews")
+@ToString(exclude = "product")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

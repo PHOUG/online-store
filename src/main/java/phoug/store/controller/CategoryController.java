@@ -15,6 +15,7 @@ import phoug.store.service.CategoryService;
 @RequestMapping("/category")
 @AllArgsConstructor
 public class CategoryController {
+
     private final CategoryService categoryService;
 
     @PostMapping("/{categoryId}/add/{productId}")
