@@ -26,8 +26,6 @@ public class LogServiceImpl implements LogService {
 
     private static final String LOGS_DIRECTORY = "/Users/phoug/onlineStore/logs";
     private static final String MAIN_LOG_FILE = "/Users/phoug/onlineStore/logs/application.log";
-    private static Path LOGS_PATH = new File(LOGS_DIRECTORY).toPath().normalize();
-    private static Path MAIN_LOG_PATH = new File(MAIN_LOG_FILE).toPath().normalize();
     private final Map<String, LogTask> tasks = new ConcurrentHashMap<>();
 
     @Override
@@ -46,16 +44,18 @@ public class LogServiceImpl implements LogService {
         task.setStatus("PROCESSING");
 
         try {
-            if (!Files.exists(MAIN_LOG_PATH)) {
+            Path logPath = Paths.get(MAIN_LOG_FILE);
+            if (!Files.exists(logPath)) {
                 throw new IOException("Main log file not found");
             }
 
-            if (!Files.exists(LOGS_PATH)) {
-                Files.createDirectories(LOGS_PATH);
+            Path logsDir = Paths.get(LOGS_DIRECTORY);
+            if (!Files.exists(logsDir)) {
+                Files.createDirectories(logsDir);
             }
 
             String filteredLogs;
-            try (Stream<String> lines = Files.lines(MAIN_LOG_PATH)) {
+            try (Stream<String> lines = Files.lines(logPath)) {
                 filteredLogs = lines
                         .filter(line -> line.contains(date))
                         .filter(line -> logType == null || line.contains(logType))
@@ -67,7 +67,12 @@ public class LogServiceImpl implements LogService {
             }
 
             String filename = String.format("logs-%s-%s.log", date, taskId);
-            Path outputFile = LOGS_PATH.resolve(filename);
+            Path outputFile = logsDir.resolve(filename);
+
+            if (!outputFile.startsWith(Paths.get(LOGS_DIRECTORY))) {
+                throw new SecurityException("Invalid path: potential path traversal attempt.");
+            }
+
             Files.write(outputFile, filteredLogs.getBytes());
 
             task.setStatus("COMPLETED");
@@ -95,7 +100,12 @@ public class LogServiceImpl implements LogService {
         }
 
         try {
-            Path filePath = Paths.get(task.getFilePath());
+            Path filePath = Paths.get(task.getFilePath()).normalize();
+
+            if (!filePath.startsWith(Paths.get(LOGS_DIRECTORY))) {
+                return ResponseEntity.badRequest().build();
+            }
+
             Resource resource = new UrlResource(filePath.toUri());
 
             return ResponseEntity.ok()
@@ -111,11 +121,12 @@ public class LogServiceImpl implements LogService {
     @Override
     public String viewLogsByDate(String date) {
         try {
-            if (!Files.exists(MAIN_LOG_PATH)) {
+            Path logPath = Paths.get(MAIN_LOG_FILE);
+            if (!Files.exists(logPath)) {
                 throw new IOException("Main log file not found");
             }
 
-            try (Stream<String> lines = Files.lines(MAIN_LOG_PATH)) {
+            try (Stream<String> lines = Files.lines(logPath)) {
                 return lines
                         .filter(line -> line.contains(date))
                         .collect(Collectors.joining("\n"));
