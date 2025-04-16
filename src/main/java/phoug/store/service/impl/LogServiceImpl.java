@@ -87,9 +87,11 @@ public class LogServiceImpl implements LogService {
     @Override
     public LogTask getTaskStatus(String taskId) {
         LogTask task = tasks.get(taskId);
+
         if (task == null) {
             throw new RuntimeException("Task not found");
         }
+
         return task;
     }
 
