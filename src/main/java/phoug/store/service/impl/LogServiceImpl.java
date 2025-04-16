@@ -66,7 +66,8 @@ public class LogServiceImpl implements LogService {
                 throw new IOException("No logs found for specified criteria");
             }
 
-            String filename = String.format("logs-%s-%s.log", date, taskId);
+            String safeDate = date.replaceAll("[^a-zA-Z0-9-_]", "_");
+            String filename = String.format("logs-%s-%s.log", safeDate, taskId);
             Path outputFile = logsDir.resolve(filename);
 
             if (!outputFile.startsWith(Paths.get(LOGS_DIRECTORY))) {
