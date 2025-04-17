@@ -21,20 +21,6 @@ public class LogController {
         this.logService = logService;
     }
 
-    @PostMapping("/generate")
-    @Operation(summary = "Генерация log файла",
-            description = "Создаёт задачу на генерацию log-файла "
-                    + "за определённую дату, возможно с фильтрацией по типу логов")
-    public Map<String, String> generateLogFile(
-            @RequestParam String date,
-            @RequestParam(required = false) String logType) {
-
-        String taskId = logService.generateLogFile(date, logType);
-        Map<String, String> response = new HashMap<>();
-        response.put("taskId", taskId);
-        return response;
-    }
-
     @GetMapping("/status/{taskId}")
     @Operation(summary = "Возвращение статуса задачи",
             description = "Возвращает статус задачи генерации логов по taskId")

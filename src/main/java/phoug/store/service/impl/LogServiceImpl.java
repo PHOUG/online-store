@@ -41,61 +41,6 @@ public class LogServiceImpl implements LogService {
     private static final String MAIN_LOG_FILE = "/Users/phoug/onlineStore/logs/online-store.log";
     private final Map<String, LogTask> tasks = new ConcurrentHashMap<>();
 
-    @Override
-    public String generateLogFile(String date, String logType) {
-        String taskId = UUID.randomUUID().toString();
-        LogTask task = new LogTask(taskId, "PENDING", date, LocalDateTime.now());
-        tasks.put(taskId, task);
-
-        processLogGenerationAsync(taskId, date, logType);
-        return taskId;
-    }
-
-    @Async
-    public void processLogGenerationAsync(String taskId, String date, String logType) {
-        LogTask task = tasks.get(taskId);
-        task.setStatus("PROCESSING");
-
-        try {
-            Path logPath = Paths.get(MAIN_LOG_FILE);
-            if (!Files.exists(logPath)) {
-                throw new IOException("Main log file not found");
-            }
-
-            Path logsDir = Paths.get(LOGS_DIRECTORY);
-            if (!Files.exists(logsDir)) {
-                Files.createDirectories(logsDir);
-            }
-
-            String filteredLogs;
-            try (Stream<String> lines = Files.lines(logPath)) {
-                filteredLogs = lines
-                        .filter(line -> line.contains(date))
-                        .filter(line -> logType == null || line.contains(logType))
-                        .collect(Collectors.joining("\n"));
-            }
-
-            if (filteredLogs.isEmpty()) {
-                throw new IOException("No logs found for specified criteria");
-            }
-
-            String safeDate = date.replaceAll("[^a-zA-Z0-9-_]", "_");
-            String filename = String.format("logs-%s-%s.log", safeDate, taskId);
-            Path outputFile = logsDir.resolve(filename);
-
-            if (!outputFile.startsWith(Paths.get(LOGS_DIRECTORY))) {
-                throw new SecurityException("Invalid path: potential path traversal attempt.");
-            }
-
-            Files.write(outputFile, filteredLogs.getBytes());
-
-            task.setStatus("COMPLETED");
-            task.setFilePath(outputFile.toString());
-        } catch (Exception e) {
-            task.setStatus("FAILED");
-            task.setErrorMessage(e.getMessage());
-        }
-    }
 
     @Override
     public LogTask getTaskStatus(String taskId) {
