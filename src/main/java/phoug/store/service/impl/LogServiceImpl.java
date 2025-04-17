@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -130,21 +132,29 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public String viewLogsByDate(String date) {
-        LocalDate requestedDate = LocalDate.parse(date);
-        LocalDate today = LocalDate.now();
+        LocalDate requestedDate;
+        try {
+            // Validate and parse the date strictly to prevent malformed input
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            requestedDate = LocalDate.parse(date, formatter);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format. Expected yyyy-MM-dd", e);
+        }
 
+        LocalDate today = LocalDate.now();
         Path logPath;
+
         if (requestedDate.equals(today)) {
-            // today's unarchived log
-            logPath = Paths.get("logs/online-store.log");
+            // Today's unarchived log
+            logPath = Paths.get("logs", "online-store.log");
         } else {
-            // rotated logs for past dates
-            logPath = Paths.get("logs/online-store-" + date + ".log");
+            // Rotated logs for past dates
+            logPath = Paths.get("logs", "online-store-" + date + ".log");
         }
 
         if (!Files.exists(logPath)) {
             // Try .gz file for past dates
-            Path gzLogPath = Paths.get("logs/online-store.log." + date + ".0.gz");
+            Path gzLogPath = Paths.get("logs", "online-store.log." + date + ".0.gz");
             if (!Files.exists(gzLogPath)) {
                 throw new ResourceNotFoundException("No logs found for the given date: " + date);
             }
@@ -165,6 +175,7 @@ public class LogServiceImpl implements LogService {
             throw new RuntimeException("Error reading log file for date: " + date, e);
         }
     }
+
 
 
     private List<String> readArchivedLogByDate(String date) {
