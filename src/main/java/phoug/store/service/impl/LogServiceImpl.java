@@ -134,7 +134,6 @@ public class LogServiceImpl implements LogService {
     public String viewLogsByDate(String date) {
         LocalDate requestedDate;
         try {
-            // Validate and parse the date strictly to prevent malformed input
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             requestedDate = LocalDate.parse(date, formatter);
         } catch (DateTimeParseException e) {
@@ -142,21 +141,21 @@ public class LogServiceImpl implements LogService {
         }
 
         LocalDate today = LocalDate.now();
-        Path logPath;
+        DateTimeFormatter fileFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = requestedDate.format(fileFormatter);
 
+        Path logPath;
         if (requestedDate.equals(today)) {
-            // Today's unarchived log
             logPath = Paths.get("logs", "online-store.log");
         } else {
-            // Rotated logs for past dates
-            logPath = Paths.get("logs", "online-store-" + date + ".log");
+            logPath = Paths.get("logs", "online-store-" + formattedDate + ".log");
         }
 
         if (!Files.exists(logPath)) {
-            // Try .gz file for past dates
-            Path gzLogPath = Paths.get("logs", "online-store.log." + date + ".0.gz");
+            Path gzLogPath = Paths.get("logs", "online-store.log." + formattedDate + ".0.gz");
             if (!Files.exists(gzLogPath)) {
-                throw new ResourceNotFoundException("No logs found for the given date: " + date);
+                throw new ResourceNotFoundException(
+                        "No logs found for the given date: " + formattedDate);
             }
 
             try (GZIPInputStream gzipInputStream = new GZIPInputStream(
@@ -165,16 +164,18 @@ public class LogServiceImpl implements LogService {
                          new InputStreamReader(gzipInputStream))) {
                 return reader.lines().collect(Collectors.joining("\n"));
             } catch (IOException e) {
-                throw new RuntimeException("Error reading .gz log file for date: " + date, e);
+                throw new RuntimeException(
+                        "Error reading .gz log file for date: " + formattedDate, e);
             }
         }
 
         try (Stream<String> lines = Files.lines(logPath)) {
             return lines.collect(Collectors.joining("\n"));
         } catch (IOException e) {
-            throw new RuntimeException("Error reading log file for date: " + date, e);
+            throw new RuntimeException("Error reading log file for date: " + formattedDate, e);
         }
     }
+
 
 
 
