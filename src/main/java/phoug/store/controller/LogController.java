@@ -1,5 +1,7 @@
 package phoug.store.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import phoug.store.service.LogService;
 
 @RestController
 @RequestMapping("/logs")
+@Tag(name = "Log Controller", description = "API для управления логами")
 public class LogController {
 
     private final LogService logService;
@@ -18,6 +21,9 @@ public class LogController {
     }
 
     @PostMapping("/generate")
+    @Operation(summary = "Генерация log файла",
+            description = "Создаёт задачу на генерацию log-файла "
+                    + "за определённую дату, возможно с фильтрацией по типу логов")
     public Map<String, String> generateLogFile(
             @RequestParam String date,
             @RequestParam(required = false) String logType) {
@@ -29,6 +35,8 @@ public class LogController {
     }
 
     @GetMapping("/status/{taskId}")
+    @Operation(summary = "Возвращение статуса задачи",
+            description = "Возвращает статус задачи генерации логов по taskId")
     public Map<String, Object> getTaskStatus(@PathVariable String taskId) {
         LogTask task = (LogTask) logService.getTaskStatus(taskId);
 
@@ -45,11 +53,16 @@ public class LogController {
     }
 
     @GetMapping("/download/{taskId}")
+    @Operation(summary = "Скачать сгенерированный log-файл",
+            description = "Позволяет скачать сгенерированный лог-файл, если задача завершена")
     public ResponseEntity<?> downloadLogFile(@PathVariable String taskId) {
         return logService.downloadLogFile(taskId);
     }
 
     @GetMapping("/view")
+    @Operation(summary = "Просмотр логов",
+            description = "Позволяет просмотреть содержимое "
+                    + "логов за указанную дату как обычный текст")
     public String viewLogs(@RequestParam String date) {
         return logService.viewLogsByDate(date);
     }

@@ -24,3 +24,10 @@ logging:
     org.hibernate: WARN
     com.zaxxer.hikari: ERROR
     org.apache.catalina: ERROR
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+    version: openapi_3_0
