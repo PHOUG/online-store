@@ -14,13 +14,13 @@ spring:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-#logging:
-#  file:
-#    name: online-store.log
-#  level:
-#    root: INFO
-#    phoug.store: DEBUG
-#    org.springframework: WARN
-#    org.hibernate: WARN
-#    com.zaxxer.hikari: ERROR
-#    org.apache.catalina: ERROR
+logging:
+  file:
+    name: logs/online-store.log
+  level:
+    root: INFO
+    phoug.store: DEBUG
+    org.springframework: WARN
+    org.hibernate: WARN
+    com.zaxxer.hikari: ERROR
+    org.apache.catalina: ERROR

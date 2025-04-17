@@ -4,6 +4,7 @@ online-store.log
 checkstyle-conf.xml
 mvnw
 mvnw.cmd
+logs
 **/src/main/resources/application.yaml
 target/
 !.mvn/wrapper/maven-wrapper.jar
