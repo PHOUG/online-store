@@ -28,7 +28,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import phoug.store.exception.LogReadException;
 import phoug.store.exception.ResourceNotFoundException;
+import phoug.store.exception.TaskNotFoundException;
 import phoug.store.model.LogTask;
 import phoug.store.service.LogService;
 
@@ -99,7 +101,7 @@ public class LogServiceImpl implements LogService {
     public LogTask getTaskStatus(String taskId) {
         LogTask task = tasks.get(taskId);
         if (task == null) {
-            throw new RuntimeException("Task not found");
+            throw new TaskNotFoundException("Task not found");
         }
         return task;
     }
@@ -164,7 +166,7 @@ public class LogServiceImpl implements LogService {
                          new InputStreamReader(gzipInputStream))) {
                 return reader.lines().collect(Collectors.joining("\n"));
             } catch (IOException e) {
-                throw new RuntimeException(
+                throw new LogReadException(
                         "Error reading .gz log file for date: " + formattedDate, e);
             }
         }
@@ -172,31 +174,7 @@ public class LogServiceImpl implements LogService {
         try (Stream<String> lines = Files.lines(logPath)) {
             return lines.collect(Collectors.joining("\n"));
         } catch (IOException e) {
-            throw new RuntimeException("Error reading log file for date: " + formattedDate, e);
+            throw new LogReadException("Error reading log file for date: " + formattedDate, e);
         }
     }
-
-
-
-
-    private List<String> readArchivedLogByDate(String date) {
-        String fileName = String.format("online-store.log.%s.0.gz", date);
-        Path gzPath = Paths.get("logs", fileName);
-
-        List<String> lines = new ArrayList<>();
-
-        try (GZIPInputStream gis = new GZIPInputStream(Files.newInputStream(gzPath));
-             BufferedReader reader = new BufferedReader(new InputStreamReader(gis))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                lines.add(line);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка при чтении архива лога: " + gzPath, e);
-        }
-
-        return lines;
-    }
-
-
 }

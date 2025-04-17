@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import phoug.store.model.LogTask;
@@ -38,7 +39,7 @@ public class LogController {
     @Operation(summary = "Возвращение статуса задачи",
             description = "Возвращает статус задачи генерации логов по taskId")
     public Map<String, Object> getTaskStatus(@PathVariable String taskId) {
-        LogTask task = (LogTask) logService.getTaskStatus(taskId);
+        LogTask task = logService.getTaskStatus(taskId);
 
         Map<String, Object> response = new HashMap<>();
         response.put("taskId", task.getId());
@@ -55,7 +56,7 @@ public class LogController {
     @GetMapping("/download/{taskId}")
     @Operation(summary = "Скачать сгенерированный log-файл",
             description = "Позволяет скачать сгенерированный лог-файл, если задача завершена")
-    public ResponseEntity<?> downloadLogFile(@PathVariable String taskId) {
+    public ResponseEntity<Resource> downloadLogFile(@PathVariable String taskId) {
         return logService.downloadLogFile(taskId);
     }
 

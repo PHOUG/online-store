@@ -18,6 +18,7 @@ import phoug.store.exception.ValidationException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String VALIDATION_ERROR_LOG = "Validation error: {}";
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -29,7 +30,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleBadRequestException(BadRequestException ex) {
-        logger.error("Validation error: {}", ex.getMessage());
+        logger.error(VALIDATION_ERROR_LOG, ex.getMessage());
         return ex.getMessage();
     }
 
@@ -42,14 +43,14 @@ public class GlobalExceptionHandler {
             String message = error.getDefaultMessage();
             errors.put(fieldName, message);
         });
-        logger.error("Validation error: {}", ex.getMessage());
+        logger.error(VALIDATION_ERROR_LOG, ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleValidationExceptions(ValidationException ex) {
-        logger.error("Validation error: {}", ex.getMessage());
+        logger.error(VALIDATION_ERROR_LOG, ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
