@@ -3,6 +3,7 @@ package phoug.store.service.impl;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -106,5 +107,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategoryById(Long id) {
         categoryRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Category> saveAll(List<Category> categories) {
+        // Пример простой фильтрации или преобразования, если нужно
+        List<Category> validCategories = categories.stream()
+                .filter(c -> c.getCategoryName() != null && c.getCategoryName().length() >= 3)
+                .collect(Collectors.toList());
+
+        return categoryRepository.saveAll(validCategories);
     }
 }

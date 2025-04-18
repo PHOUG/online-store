@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import phoug.store.model.Category;
 import phoug.store.service.CategoryService;
@@ -21,6 +22,17 @@ import phoug.store.service.CategoryService;
 public class CategoryController {
 
     private final CategoryService categoryService;
+
+    @PostMapping("/add-many")
+    @Operation(summary = "Создаёт большое количество категорий",
+            description = "Создаёт категории из передаваемого множества")
+    @ApiResponse(responseCode = "200", description = "Категории созданы")
+    @ApiResponse(responseCode = "400", description = "Некоторые категории уже есьт")
+    public ResponseEntity<List<Category>> createBulk(
+            @RequestBody @Valid List<Category> categories) {
+        List<Category> saved = categoryService.saveAll(categories);
+        return ResponseEntity.ok(saved);
+    }
 
     @PostMapping("/{categoryId}/add/{productId}")
     @Operation(summary = "Связать товар и категорию",

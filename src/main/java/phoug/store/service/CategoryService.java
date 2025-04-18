@@ -8,6 +8,8 @@ public interface CategoryService {
 
     boolean addProductToCategory(Long categoryId, Long productId);
 
+    List<Category> saveAll(List<Category> categories);
+
     boolean removeProductFromCategory(Long categoryId, Long productId);
 
     void saveCategory(Category category);
