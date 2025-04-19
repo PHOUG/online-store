@@ -28,10 +28,17 @@ public class LoggingAspect {
     @AfterReturning(pointcut = "applicationPackagePointcut()", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
         if (logger.isInfoEnabled()) {
-            logger.info("Method {} executed successfully. Result: {}",
-                    joinPoint.getSignature().toShortString(), result);
+            String methodName = joinPoint.getSignature().toShortString();
+
+            // Исключение для метода viewLogsByDate (можно по имени или классу/методу)
+            if (methodName.contains("LogServiceImpl.viewLogsByDate")) {
+                logger.info("Method {} executed successfully. (result omitted)", methodName);
+            } else {
+                logger.info("Method {} executed successfully. Result: {}", methodName, result);
+            }
         }
     }
+
 
     // Логирование ошибок
     @AfterThrowing(pointcut = "applicationPackagePointcut()", throwing = "error")
