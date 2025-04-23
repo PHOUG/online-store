@@ -1,19 +1,20 @@
 package phoug.store.service.impl;
 
+import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
 import phoug.store.exception.ResourceNotFoundException;
 import phoug.store.model.Product;
 import phoug.store.repository.ProductRepository;
 import phoug.store.utils.InMemoryCache;
-
-import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
 
     @Mock
