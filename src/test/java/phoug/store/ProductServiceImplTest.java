@@ -11,11 +11,8 @@ import phoug.store.exception.ResourceNotFoundException;
 import phoug.store.model.Product;
 import phoug.store.repository.ProductRepository;
 import phoug.store.utils.InMemoryCache;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

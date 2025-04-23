@@ -15,10 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import phoug.store.model.Product;
 import phoug.store.model.Review;
 import phoug.store.repository.ReviewRepository;
-import phoug.store.service.impl.ReviewServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-public class ReviewServiceImplTest {
+class ReviewServiceImplTest {
 
     @Mock
     private ReviewRepository reviewRepository;
@@ -30,7 +29,7 @@ public class ReviewServiceImplTest {
     private Review testReview;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         testProduct = new Product();
         testProduct.setId(1L);
         testProduct.setName("Test Product");
@@ -40,7 +39,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void testSaveReview() {
+    void testSaveReview() {
         when(reviewRepository.save(testReview)).thenReturn(testReview);
 
         reviewService.saveReview(testReview);
@@ -49,7 +48,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void testFindReviewsByProduct_nonEmpty() {
+    void testFindReviewsByProduct_nonEmpty() {
         when(reviewRepository.findByProduct(testProduct)).thenReturn(Arrays.asList(testReview));
 
         List<Review> reviews = reviewService.findReviewsByProduct(testProduct);
@@ -60,7 +59,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void testFindReviewsByProduct_empty() {
+    void testFindReviewsByProduct_empty() {
         when(reviewRepository.findByProduct(testProduct)).thenReturn(Collections.emptyList());
 
         List<Review> reviews = reviewService.findReviewsByProduct(testProduct);
@@ -70,7 +69,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void testFindReviewById_found() {
+    void testFindReviewById_found() {
         when(reviewRepository.findById(100L)).thenReturn(Optional.of(testReview));
 
         Optional<Review> result = reviewService.findReviewById(100L);
@@ -80,7 +79,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void testFindReviewById_notFound() {
+    void testFindReviewById_notFound() {
         when(reviewRepository.findById(999L)).thenReturn(Optional.empty());
 
         Optional<Review> result = reviewService.findReviewById(999L);
@@ -89,7 +88,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void testDeleteReviewById() {
+    void testDeleteReviewById() {
         doNothing().when(reviewRepository).deleteById(100L);
 
         reviewService.deleteReviewById(100L);
@@ -98,7 +97,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void testUpdateReview_existing() {
+    void testUpdateReview_existing() {
         Review updated = new Review("Updated comment", "Bob", 5, testProduct);
         updated.setId(100L);
 
@@ -115,7 +114,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void testUpdateReview_notExisting() {
+    void testUpdateReview_notExisting() {
         Review updated = new Review("Updated comment", "Bob", 5, testProduct);
 
         when(reviewRepository.findById(200L)).thenReturn(Optional.empty());
@@ -126,14 +125,14 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void testExistsById_true() {
+    void testExistsById_true() {
         when(reviewRepository.existsById(100L)).thenReturn(true);
 
         assertTrue(reviewService.existsById(100L));
     }
 
     @Test
-    public void testExistsById_false() {
+    void testExistsById_false() {
         when(reviewRepository.existsById(200L)).thenReturn(false);
 
         assertFalse(reviewService.existsById(200L));

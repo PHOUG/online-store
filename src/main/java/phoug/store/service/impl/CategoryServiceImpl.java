@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import phoug.store.model.Category;
@@ -119,7 +118,7 @@ public class CategoryServiceImpl implements CategoryService {
         // Пример простой фильтрации или преобразования, если нужно
         List<Category> validCategories = categories.stream()
                 .filter(c -> c.getCategoryName() != null && c.getCategoryName().length() >= 3)
-                .collect(Collectors.toList());
+                .toList();
 
         return categoryRepository.saveAll(validCategories);
     }

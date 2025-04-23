@@ -1,20 +1,15 @@
 package phoug.store.service.impl;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,12 +17,9 @@ import java.util.zip.GZIPInputStream;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import phoug.store.exception.LogReadException;
 import phoug.store.exception.ResourceNotFoundException;
 import phoug.store.exception.TaskNotFoundException;
@@ -38,7 +30,6 @@ import phoug.store.service.LogService;
 public class LogServiceImpl implements LogService {
 
     private static final String LOGS_DIRECTORY = "/Users/phoug/onlineStore/logs";
-    private static final String MAIN_LOG_FILE = "/Users/phoug/onlineStore/logs/online-store.log";
     private final Map<String, LogTask> tasks = new ConcurrentHashMap<>();
 
 

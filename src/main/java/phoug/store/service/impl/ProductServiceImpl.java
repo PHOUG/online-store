@@ -1,11 +1,8 @@
 package phoug.store.service.impl;
 
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -24,15 +21,12 @@ public class ProductServiceImpl implements ProductService {
     private static final String NOTFOUND = " not found";
     private final ProductRepository productRepository;
     private final InMemoryCache<Long, Product> productCache;
-    private final JdbcTemplate jdbcTemplate;
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     public ProductServiceImpl(ProductRepository productRepository,
-                              InMemoryCache<Long, Product> productCache,
-                              JdbcTemplate jdbcTemplate) {
+                              InMemoryCache<Long, Product> productCache) {
         this.productRepository = productRepository;
         this.productCache = productCache;
-        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
