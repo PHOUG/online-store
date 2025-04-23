@@ -1,4 +1,4 @@
-package phoug.store.service.impl;
+package phoug.store;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import phoug.store.model.Product;
 import phoug.store.model.Review;
 import phoug.store.repository.ReviewRepository;
+import phoug.store.service.impl.ReviewServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceImplTest {

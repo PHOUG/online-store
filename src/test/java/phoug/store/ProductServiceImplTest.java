@@ -1,4 +1,4 @@
-package phoug.store.service.impl;
+package phoug.store;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import phoug.store.exception.ResourceNotFoundException;
 import phoug.store.model.Product;
 import phoug.store.repository.ProductRepository;
+import phoug.store.service.impl.ProductServiceImpl;
 import phoug.store.utils.InMemoryCache;
 import java.util.List;
 import java.util.Optional;

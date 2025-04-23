@@ -45,5 +45,95 @@ public class Product {
             fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Category> categories = new ArrayList<>();
 
-    public Product() {}
+    public Product() {
+        // Конструктор по умолчанию
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getArticle() {
+        return article;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setArticle(String article) {
+        this.article = article;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
 }

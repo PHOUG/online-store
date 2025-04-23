@@ -3,7 +3,6 @@ package phoug.store.service.impl;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import phoug.store.model.Category;

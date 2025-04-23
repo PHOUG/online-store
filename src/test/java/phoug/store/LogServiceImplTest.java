@@ -1,4 +1,4 @@
-package phoug.store.service.impl;
+package phoug.store;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import phoug.store.exception.LogReadException;
 import phoug.store.exception.ResourceNotFoundException;
 import phoug.store.exception.TaskNotFoundException;
 import phoug.store.model.LogTask;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -27,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
-
+import phoug.store.service.impl.LogServiceImpl;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)

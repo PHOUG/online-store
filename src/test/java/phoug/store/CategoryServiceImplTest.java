@@ -1,4 +1,4 @@
-package phoug.store.service.impl;
+package phoug.store;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,9 +9,9 @@ import phoug.store.model.Category;
 import phoug.store.model.Product;
 import phoug.store.repository.CategoryRepository;
 import phoug.store.repository.ProductRepository;
+import phoug.store.service.impl.CategoryServiceImpl;
 
 import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
