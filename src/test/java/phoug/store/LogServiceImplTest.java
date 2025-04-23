@@ -7,19 +7,28 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import phoug.store.exception.LogReadException;
 import phoug.store.exception.ResourceNotFoundException;
 import phoug.store.exception.TaskNotFoundException;
 import phoug.store.model.LogTask;
-import phoug.store.service.impl.LogServiceImpl;
-import java.io.*;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,25 +49,25 @@ class LogServiceImplTest {
         completedTaskId = UUID.randomUUID().toString();
         pendingTaskId = UUID.randomUUID().toString();
 
-        // Создаём файл в директории logs/
+        // Create default logs directory
         Path logsDir = Paths.get("logs");
         Files.createDirectories(logsDir);
         Path completedFile = logsDir.resolve("completed.log");
         Files.writeString(completedFile, "Completed log content");
 
         completedTask = new LogTask(completedTaskId, "COMPLETED", "2024-04-01", LocalDateTime.now());
-        completedTask.setFilePath("logs/completed.log"); // относительный путь
+        completedTask.setFilePath(completedFile.toString());
 
+        pendingTask = new LogTask(pendingTaskId, "PENDING", "2024-04-01", LocalDateTime.now());
+
+        // Inject tasks via reflection
         Field tasksField = LogServiceImpl.class.getDeclaredField("tasks");
         tasksField.setAccessible(true);
         @SuppressWarnings("unchecked")
-        java.util.Map<String, LogTask> tasks = (java.util.Map<String, LogTask>) tasksField.get(logService);
+        Map<String, LogTask> tasks = (Map<String, LogTask>) tasksField.get(logService);
         tasks.put(completedTaskId, completedTask);
-
-        pendingTask = new LogTask(pendingTaskId, "PENDING", "2024-04-01", LocalDateTime.now());
         tasks.put(pendingTaskId, pendingTask);
     }
-
 
     @Test
     void testGetTaskStatus_Valid() {
@@ -73,16 +82,53 @@ class LogServiceImplTest {
     }
 
     @Test
+    void testDownloadLogFile_TaskNotFound() {
+        ResponseEntity<Resource> response = logService.downloadLogFile("unknown-id");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
     void testDownloadLogFile_NotCompleted() {
         ResponseEntity<Resource> response = logService.downloadLogFile(pendingTaskId);
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     void testDownloadLogFile_InvalidPath() {
         completedTask.setFilePath("/etc/passwd");
         ResponseEntity<Resource> response = logService.downloadLogFile(completedTaskId);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void testDownloadLogFile_Success() throws Exception {
+        // Read the real LOGS_DIRECTORY constant via reflection
+        Field logsDirField = LogServiceImpl.class.getDeclaredField("LOGS_DIRECTORY");
+        logsDirField.setAccessible(true);
+        String logsDir = (String) logsDirField.get(null);
+
+        // Create test file inside the real logs directory
+        Path baseDir = Paths.get(logsDir);
+        Files.createDirectories(baseDir);
+        Path logFile = baseDir.resolve("test-file.log");
+        Files.writeString(logFile, "Test content");
+
+        completedTask.setFilePath(logFile.toString());
+        ResponseEntity<Resource> response = logService.downloadLogFile(completedTaskId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getHeaders().containsKey(HttpHeaders.CONTENT_DISPOSITION));
+        assertEquals("attachment; filename=test-file.log", response.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION));
+        assertEquals(MediaType.APPLICATION_OCTET_STREAM, response.getHeaders().getContentType());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void testDownloadLogFile_InternalServerError() {
+        // Trigger exception by setting filePath to null
+        completedTask.setFilePath(null);
+        ResponseEntity<Resource> response = logService.downloadLogFile(completedTaskId);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
@@ -102,7 +148,6 @@ class LogServiceImplTest {
         String date = "2022-01-01";
         Path gzFile = Paths.get("logs/online-store.log." + date + ".0.gz");
         Files.createDirectories(gzFile.getParent());
-
         try (GZIPOutputStream gzipOut = new GZIPOutputStream(Files.newOutputStream(gzFile));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(gzipOut))) {
             writer.write("GZ log content");

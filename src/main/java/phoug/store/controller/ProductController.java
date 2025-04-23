@@ -123,13 +123,6 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body("Product has been deleted!");
     }
 
-    @DeleteMapping("delete/all")
-    @Operation(summary = "Удаляет все товары")
-    @ApiResponse(responseCode = "200", description = "Товары успешно удалены")
-    public void deleteAllProducts() {
-        productService.deleteAllProducts();
-    }
-
     // Эндпоинт для получения всех товаров из кэша
     @GetMapping("/cached")
     @Operation(summary = "Показывае товары в кэше",

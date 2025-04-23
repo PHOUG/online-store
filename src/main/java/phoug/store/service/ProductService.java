@@ -25,8 +25,6 @@ public interface ProductService {
     // DELETE удаление продукта по артикулу
     void deleteProductByArticle(String article);
 
-    void deleteAllProducts();
-
     Product findProductById(Long id);
 
     List<Product> findProductsByCategories(List<String> categories);

@@ -22,7 +22,7 @@ import phoug.store.service.ProductService;
 public class ReviewServiceImplTest {
 
     @Mock
-    private ReviewRepository reviewRepository;  // Ваш репозиторий для работы с отзывами
+    private ReviewRepository reviewRepository;
 
     @Mock
     private ProductService productService;  // Сервис для работы с продуктами

@@ -186,13 +186,6 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    @Transactional
-    public void deleteAllProducts() {
-        productRepository.deleteAll();
-        productCache.clear();
-        jdbcTemplate.execute("ALTER SEQUENCE products_id_seq RESTART WITH 1");
-    }
-
     @Override
     public List<Product> findProductsByCategories(List<String> categories) {
         return productRepository.findProductsByAllCategories(categories, categories.size());

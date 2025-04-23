@@ -14,7 +14,7 @@ import phoug.store.utils.InMemoryCache;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+//@ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
 
     @Mock
@@ -113,12 +113,4 @@ class ProductServiceImplTest {
         verify(productCache).evict(1L);
     }
 
-    @Test
-    void deleteAllProducts_shouldClearAll() {
-        productService.deleteAllProducts();
-
-        verify(productRepository).deleteAll();
-        verify(productCache).clear();
-        verify(jdbcTemplate).execute("ALTER SEQUENCE products_id_seq RESTART WITH 1");
-    }
 }
