@@ -29,9 +29,9 @@ public class Review {
     @DecimalMax(value = "5.00", message = "The maximum rating of the product is 5.00.")
     private double rating;
 
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_article", nullable = false)
+    @JsonBackReference
     private Product product;
 
     public Review() {}

@@ -35,8 +35,8 @@ public class Product {
     private String size;
     private String color;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
 
     // Связь с категориями
