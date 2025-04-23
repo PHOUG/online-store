@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,10 +24,13 @@ import phoug.store.service.ProductService;
 
 @RestController
 @RequestMapping("/products")
-@AllArgsConstructor
 @Tag(name = "Product Controller", description = "API для управления товарами")
 public class ProductController {
     private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     // Create-POST создать новую карточку товара
     @PostMapping("create")

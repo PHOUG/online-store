@@ -19,7 +19,6 @@ import phoug.store.service.ProductService;
 import phoug.store.utils.InMemoryCache;
 
 @Service
-@AllArgsConstructor
 @Primary
 public class ProductServiceImpl implements ProductService {
     private static final String NOTFOUND = " not found";
@@ -27,6 +26,14 @@ public class ProductServiceImpl implements ProductService {
     private final InMemoryCache<Long, Product> productCache;
     private final JdbcTemplate jdbcTemplate;
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
+    public ProductServiceImpl(ProductRepository productRepository,
+                              InMemoryCache<Long, Product> productCache,
+                              JdbcTemplate jdbcTemplate) {
+        this.productRepository = productRepository;
+        this.productCache = productCache;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public void saveProduct(Product product) {

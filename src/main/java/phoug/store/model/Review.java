@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Data
@@ -40,6 +42,46 @@ public class Review {
         this.comment = comment;
         this.rating = rating;
         this.author = author;
+        this.product = product;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public void setProduct(Product product) {
         this.product = product;
     }
 }

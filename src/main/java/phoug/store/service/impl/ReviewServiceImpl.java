@@ -11,10 +11,13 @@ import phoug.store.repository.ReviewRepository;
 import phoug.store.service.ReviewService;
 
 @Service
-@AllArgsConstructor
 @Primary
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
+
+    public ReviewServiceImpl(ReviewRepository reviewRepository) {
+        this.reviewRepository = reviewRepository;
+    }
 
     @Override
     public void saveReview(Review review) {

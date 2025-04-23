@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +18,15 @@ import phoug.store.service.ReviewService;
 
 @RestController
 @RequestMapping("/reviews")
-@AllArgsConstructor
 @Tag(name = "Reviews Controller", description = "API для управления отзывами на товары")
 public class ReviewController {
     private final ReviewService reviewService;
     private final ProductService productService;
+
+    public ReviewController(ReviewService reviewService, ProductService productService) {
+        this.reviewService = reviewService;
+        this.productService = productService;
+    }
 
     // Создание отзыва для товара по артикулу
     @PostMapping("create/{productArticle}")

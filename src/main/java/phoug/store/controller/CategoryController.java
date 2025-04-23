@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +18,14 @@ import phoug.store.service.CategoryService;
 
 @RestController
 @RequestMapping("/category")
-@AllArgsConstructor
 @Tag(name = "Category Controller", description = "API для управления категориями товаров")
 public class CategoryController {
 
     private final CategoryService categoryService;
+
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @PostMapping("/add-many")
     @Operation(summary = "Создаёт большое количество категорий",

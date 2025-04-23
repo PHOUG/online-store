@@ -14,11 +14,16 @@ import phoug.store.repository.ProductRepository;
 import phoug.store.service.CategoryService;
 
 @Service
-@AllArgsConstructor
 @Primary
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository,
+                               ProductRepository productRepository) {
+        this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
+    }
 
     // Добавить товар в категорию
     @Transactional

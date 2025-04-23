@@ -6,6 +6,8 @@ import jakarta.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Data
@@ -29,7 +31,6 @@ public class Category {
             joinColumns = @JoinColumn(name = "category_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    //@JsonIgnore // Управляемая сторона, будет сериализована
     private List<Product> products = new ArrayList<>();
 
     // Конструктор по умолчанию
@@ -38,5 +39,29 @@ public class Category {
     // Конструктор с параметрами
     public Category(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }
