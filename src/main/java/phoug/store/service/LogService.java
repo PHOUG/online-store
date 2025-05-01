@@ -11,4 +11,7 @@ public interface LogService {
     ResponseEntity<Resource> downloadLogFile(String taskId);
 
     String viewLogsByDate(String date);
+
+    String createLogTask(String date);
+
 }

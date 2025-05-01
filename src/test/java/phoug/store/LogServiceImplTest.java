@@ -25,6 +25,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.zip.GZIPOutputStream;
 import phoug.store.service.impl.LogServiceImpl;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class LogServiceImplTest {
 
-    @InjectMocks
     private LogServiceImpl logService;
 
     private LogTask completedTask;
@@ -42,7 +43,8 @@ class LogServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        logService = new LogServiceImpl();
+        Executor executor = Executors.newSingleThreadExecutor();
+        logService = new LogServiceImpl(executor);
 
         completedTaskId = UUID.randomUUID().toString();
         pendingTaskId = UUID.randomUUID().toString();
@@ -88,7 +90,7 @@ class LogServiceImplTest {
     @Test
     void testDownloadLogFile_NotCompleted() {
         ResponseEntity<Resource> response = logService.downloadLogFile(pendingTaskId);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
 
     @Test
@@ -116,7 +118,7 @@ class LogServiceImplTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getHeaders().containsKey(HttpHeaders.CONTENT_DISPOSITION));
-        assertEquals("attachment; filename=test-file.log", response.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION));
+        assertEquals("attachment; filename=\"test-file.log\"", response.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION));
         assertEquals(MediaType.APPLICATION_OCTET_STREAM, response.getHeaders().getContentType());
         assertNotNull(response.getBody());
     }

@@ -3,22 +3,31 @@ package phoug.store.service.impl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import phoug.store.exception.LogReadException;
 import phoug.store.exception.ResourceNotFoundException;
@@ -31,6 +40,12 @@ public class LogServiceImpl implements LogService {
 
     private static final String LOGS_DIRECTORY = "/Users/phoug/onlineStore/logs";
     private final Map<String, LogTask> tasks = new ConcurrentHashMap<>();
+
+    private final Executor taskExecutor;
+
+    public LogServiceImpl(@Qualifier("taskExecutor") Executor taskExecutor) {
+        this.taskExecutor = taskExecutor;
+    }
 
 
     @Override
@@ -45,28 +60,33 @@ public class LogServiceImpl implements LogService {
     @Override
     public ResponseEntity<Resource> downloadLogFile(String taskId) {
         LogTask task = tasks.get(taskId);
-        if (task == null || !"COMPLETED".equals(task.getStatus())) {
+
+        if (task == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!"COMPLETED".equals(task.getStatus())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .header("Log-Status", task.getStatus())
+                    .build();
         }
 
         try {
             Path filePath = Paths.get(task.getFilePath()).normalize();
-
             if (!filePath.startsWith(Paths.get(LOGS_DIRECTORY))) {
                 return ResponseEntity.badRequest().build();
             }
-
             Resource resource = new UrlResource(filePath.toUri());
-
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=" + filePath.getFileName())
+                            "attachment; filename=\"" + filePath.getFileName() + "\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
+
 
     @Override
     public String viewLogsByDate(String date) {
@@ -112,5 +132,58 @@ public class LogServiceImpl implements LogService {
         } catch (IOException e) {
             throw new LogReadException("Error reading log file for date: " + formattedDate, e);
         }
+    }
+
+    @Async("taskExecutor")
+    public void processLogTask(LogTask task) {
+        try {
+            Thread.sleep(15_000); // 15 секунд
+
+            // После паузы пойдёт ваша основная логика генерации файла
+            String path = generateLogFile(task.getDate());
+            task.setFilePath(path);
+            task.setStatus("COMPLETED");
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            task.setStatus("FAILED");
+            task.setErrorMessage("Interrupted");
+        } catch (Exception ex) {
+            task.setStatus("FAILED");
+            task.setErrorMessage(ex.getMessage());
+        }
+    }
+
+    @Override
+    public String createLogTask(String date) {
+        String id = UUID.randomUUID().toString();
+        LogTask task = new LogTask(id, "IN_PROGRESS", date, LocalDateTime.now());
+        tasks.put(id, task);
+
+        taskExecutor.execute(() -> processLogTask(task));
+
+        return id;
+    }
+
+    private String generateLogFile(String date) throws IOException {
+        // Получаем текст логов (или бросим исключение, если дата некорректна)
+        String logsContent = viewLogsByDate(date);
+
+        // Генерируем уникальное имя файла
+        String fileName = String.format("online-store-%s-%s.log",
+                date, UUID.randomUUID().toString());
+
+        // Путь внутри директории LOGS_DIRECTORY
+        Path outPath = Paths.get(LOGS_DIRECTORY, fileName);
+
+        // Записываем файл
+        Files.writeString(
+                outPath,
+                logsContent,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE_NEW
+        );
+
+        return outPath.toAbsolutePath().toString();
     }
 }

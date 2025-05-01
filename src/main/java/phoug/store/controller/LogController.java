@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import phoug.store.model.LogTask;
 import phoug.store.service.LogService;
 
@@ -52,5 +54,22 @@ public class LogController {
                     + "логов за указанную дату как обычный текст")
     public String viewLogs(@RequestParam String date) {
         return logService.viewLogsByDate(date);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(summary = "Запуск асинхронной задачи",
+            description = "Создаёт фоновую задачу по генерации "
+                    + "лог-файла за указанную дату и возвращает её ID"
+    )
+    public Map<String, String> startLogTask(@RequestParam String date) {
+        try {
+            String taskId = logService.createLogTask(date);
+            return Map.of("taskId", taskId);
+        } catch (IllegalArgumentException ex) {
+            // неверный формат даты
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
+        }
+
     }
 }
