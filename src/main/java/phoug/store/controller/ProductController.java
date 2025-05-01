@@ -1,6 +1,7 @@
 package phoug.store.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import phoug.store.model.Product;
 import phoug.store.service.ProductService;
+import phoug.store.service.VisitCounterService;
 
 
 @RestController
@@ -25,9 +27,12 @@ import phoug.store.service.ProductService;
 @Tag(name = "Product Controller", description = "API для управления товарами")
 public class ProductController {
     private final ProductService productService;
+    private final VisitCounterService visitCounterService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService,
+                             VisitCounterService visitCounterService) {
         this.productService = productService;
+        this.visitCounterService = visitCounterService;
     }
 
     // Create-POST создать новую карточку товара
@@ -70,8 +75,18 @@ public class ProductController {
     @ApiResponse(responseCode = "200", description = "Товар успешно найден")
     @ApiResponse(responseCode = "404", description = "Товара с таким названием нет")
     @GetMapping("search/name")
-    public Product findProductByName(@RequestParam String name) {
-        return productService.findProductByName(name);
+    public ResponseEntity<Product> findProductByName(
+            @Parameter(description = "Название товара")
+            @RequestParam String name) {
+        // Подсчет посещений для URL
+        visitCounterService.recordVisit("products/search/name?name=" + name);
+
+        // Поиск товара
+        Product product = productService.findProductByName(name);
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(product);
     }
 
     // Read-GET вывод товара по артиклю
