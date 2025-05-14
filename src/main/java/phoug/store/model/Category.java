@@ -31,6 +31,8 @@ public class Category {
     )
     private List<Product> products = new ArrayList<>();
 
+
+
     // Конструктор по умолчанию
     public Category() {}
 

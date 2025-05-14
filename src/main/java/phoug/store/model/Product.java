@@ -49,6 +49,11 @@ public class Product {
         // Конструктор по умолчанию
     }
 
+    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<Basket> baskets = new ArrayList<>();
+
+
     public long getId() {
         return id;
     }
